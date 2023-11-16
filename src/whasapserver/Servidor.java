@@ -17,38 +17,10 @@ public class Servidor extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) tbHistorial.getModel();
         DefaultTableModel conectados = (DefaultTableModel) TUsuarios.getModel();
         HiloServidor chat = new HiloServidor(conectados, modelo);
-        HiloConexiones conex = new HiloConexiones(conectados, modelo);
+        HiloConexiones conex = new HiloConexiones(conectados);
         chat.start();
         conex.start();
-    }
-
-    private void cargarUsuarios() throws IOException {
-        DefaultTableModel model = (DefaultTableModel) TUsuarios.getModel();
-        model.setRowCount(0); // Limpia la tabla antes de cargar los datos
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader("src/BD/Usuarios.txt"));
-            String line;
-            String name = "";
-            String username = "";
-            String password = "";
-
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith("Name:")) {
-                    name = line.substring(5).trim();
-                } else if (line.startsWith("Username:")) {
-                    username = line.substring(9).trim();
-                } else if (line.startsWith("Password:")) {
-                    password = line.substring(9).trim();
-                    model.addRow(new Object[]{name, username, password});
-                }
-            }
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }                
-    }
-    
+    }   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

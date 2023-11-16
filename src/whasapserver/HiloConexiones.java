@@ -16,11 +16,9 @@ import javax.swing.table.DefaultTableModel;
 public class HiloConexiones extends Thread {
 
     private DefaultTableModel Conexion;
-    private DefaultTableModel mensajeria;
 
-    public HiloConexiones(DefaultTableModel conectadoModel, DefaultTableModel mensajeModel) {
+    public HiloConexiones(DefaultTableModel conectadoModel) {
         this.Conexion = conectadoModel;
-        this.mensajeria = mensajeModel;
     }
 
     public void run() {
@@ -43,7 +41,6 @@ public class HiloConexiones extends Thread {
                 }
                 if (!desconectado.equals("se ha desconectado")) {
                     Conexion.addRow(new Object[]{texto, ip});
-                    mensajeria.addRow(new Object[]{texto + " ha entrado al chat"});
 
                     try {
                         for (int fila1 = 0; fila1 < Conexion.getRowCount(); fila1++) {
@@ -64,7 +61,7 @@ public class HiloConexiones extends Thread {
                 e.printStackTrace();
             }                              
                 } else {
-                    mensajeria.addRow(new Object[]{partes[0] + " se salió del chat"});
+
                 }
                 if (desconectado.equals("se ha desconectado")) {
                                        

@@ -23,47 +23,50 @@ public class HiloServidor extends Thread {
         this.Conexion = conexion;
         this.mensajeria = mensajerias;
     }
-
     @Override
-    public void run() {
+public void run(){
         try {
-            ServerSocket servidor = new ServerSocket(5211);
-            while (true) {
-                Socket conexion = servidor.accept();
-                String ip;
-                InetAddress dir;
-                dir = conexion.getInetAddress();
-                ip = dir.getHostAddress();
-                DataInputStream recibe = new DataInputStream(conexion.getInputStream());
-                String texto;
-                texto = recibe.readUTF();
-                
-                mensajeria.addRow(new Object[]{"Se ha enviado desde la ip: " + ip + " ,el mensaje < "});
-                mensajeria.addRow(new Object[]{texto + " >"} );
-                int columna = 1;
-                try {
-                    int filas = Conexion.getRowCount();
-                    for (int fila = 0; fila < filas; fila++) {
-                        Object dato = Conexion.getValueAt(fila, columna);
-                        Socket conexion2 = new Socket(dato.toString(), 5211);
-                        DataOutputStream envia2 = new DataOutputStream(conexion2.getOutputStream());
-                        envia2.writeUTF(texto);
-                        System.out.println("Mensaje enviado a: " + dato.toString());
-                        envia2.close();
-                        conexion2.close();
-                    }
-                } catch (UnknownHostException e0) {
-                    // TODO Auto-generated catch block
-                    e0.printStackTrace();
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-                conexion.close();
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+			ServerSocket servidor = new ServerSocket(5211);
+	        while(true) {
+	        	Socket conecta = servidor.accept();
+	        	String ip;
+	        	InetAddress dir;
+	        	dir = conecta.getInetAddress();
+	        	ip = dir.getHostAddress();
+	        	DataInputStream recibe = new DataInputStream(conecta.getInputStream());
+	        	String texto;
+	        	texto=recibe.readUTF(); 
+                        String[] partes = texto.split(",");
+                        mensajeria.addRow(new Object[]{"Se ha enviado desde la ip: " + ip + " ,el mensaje < "});
+                        mensajeria.addRow(new Object[]{texto + " > a: " + partes[1]} );                       
+                        try {
+				Socket conecta2 = new Socket(partes[1],5211);
+				DataOutputStream manda = new DataOutputStream(conecta2.getOutputStream());
+				manda.writeUTF(partes[0]);
+				manda.close();
+                                conecta2.close();
+                                
+                                Socket conecta3 = new Socket(ip,5211);
+				DataOutputStream manda2 = new DataOutputStream(conecta3.getOutputStream());
+				manda2.writeUTF(partes[0]);
+				manda2.close();
+                                conecta3.close();
+			} catch (UnknownHostException e0) {
+				// TODO Auto-generated catch block
+				e0.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+                     
+	        	conecta.close();
+	        	
+	        }
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+}
+    
+
 }
